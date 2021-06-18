@@ -1,5 +1,6 @@
 package benchmark.utils;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyun.openservices.aliyun.log.producer.LogProducer;
@@ -7,16 +8,19 @@ import com.aliyun.openservices.aliyun.log.producer.Producer;
 import com.aliyun.openservices.aliyun.log.producer.ProducerConfig;
 import com.aliyun.openservices.aliyun.log.producer.ProjectConfig;
 import com.aliyun.openservices.aliyun.log.producer.errors.ProducerException;
+import com.csvreader.CsvReader;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.PeekingIterator;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.tuple.Triple;
 
+
 import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -349,5 +353,20 @@ public class Helper {
 
     public static int getFileTime(File file) {
         return Integer.parseInt(file.getName().substring(10, 21));
+    }
+
+    public static ArrayList<String[]> csvReader(String filePath){
+        ArrayList<String[]> csvList = new ArrayList<String[]>();
+        try{
+            CsvReader reader =new CsvReader(filePath,',', Charset.forName("GBK"));
+            reader.readHeaders();
+            while (reader.readRecord()){
+                csvList.add(reader.getValues());
+            }
+            reader.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return csvList;
     }
 }

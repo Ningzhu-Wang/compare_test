@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class EntityTemporalConditionTest {
@@ -36,8 +37,12 @@ public class EntityTemporalConditionTest {
 
     @Test
     public void test() throws Exception {
-        for (int i = 0; i < 200; ++i)
-            query("travel_time", Helper.timeStr2int("201006300830"), Helper.timeStr2int("201006300930"), 600, 100000);
+        ArrayList<String[]> parametersList = Helper.csvReader("temporal_condition_parameters.csv");
+        for (int i = 0; i < 100; i++) {
+            String startTime = parametersList.get(i)[1];
+            String endTime = parametersList.get(i)[2];
+            query("travel_time", Helper.timeStr2int(startTime), Helper.timeStr2int(endTime), 600, 1000000);
+        }
     }
 
     private void query(String propertyName, int st, int en, int vMin, int vMax) throws Exception {

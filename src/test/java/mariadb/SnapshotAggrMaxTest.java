@@ -2,6 +2,7 @@ package mariadb;
 
 import benchmark.client.DBProxy;
 import benchmark.client.MariaDBExecutorClient;
+import benchmark.transaction.definition.SnapshotAggrDurationTx;
 import benchmark.transaction.definition.SnapshotAggrMaxTx;
 import benchmark.transaction.generation.BenchmarkTxResultProcessor;
 import benchmark.utils.Helper;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class SnapshotAggrMaxTest {
@@ -36,8 +38,12 @@ public class SnapshotAggrMaxTest {
 
     @Test
     public void test() throws Exception {
-        for (int i = 0; i < 200; ++i)
-            query("travel_t", Helper.timeStr2int("201006300830"), Helper.timeStr2int("201006300930"));
+        ArrayList<String[]> parametersList = Helper.csvReader("aggr_max_parameters.csv");
+        for (int i = 0; i < 100; i++) {
+            String startTime = parametersList.get(i)[1];
+            String endTime = parametersList.get(i)[2];
+            query("travel_t", Helper.timeStr2int(startTime), Helper.timeStr2int(endTime));
+        }
     }
 
     private void query(String propertyName, int st, int en) throws Exception {

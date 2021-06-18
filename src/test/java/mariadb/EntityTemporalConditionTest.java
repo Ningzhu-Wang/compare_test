@@ -15,12 +15,14 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class EntityTemporalConditionTest {
     private static int threadCnt = Integer.parseInt(Helper.mustEnv("MAX_CONNECTION_CNT")); // number of threads to send queries.
     private static String serverHost = Helper.mustEnv("DB_HOST"); // hostname of postgre server.
     private static String resultFile = Helper.mustEnv("SERVER_RESULT_FILE");
+
 
     private static Producer logger;
     private static DBProxy client;
@@ -38,8 +40,12 @@ public class EntityTemporalConditionTest {
 
     @Test
     public void test() throws Exception {
-        for (int i = 0; i < 200; ++i)
-            query("travel_t", Helper.timeStr2int("201006300830"), Helper.timeStr2int("201006300930"), 600, 1000000);
+        ArrayList<String[]> parametersList = Helper.csvReader("temporal_condition_parameters.csv");
+        for (int i = 0; i < 100; i++) {
+            String startTime = parametersList.get(i)[1];
+            String endTime = parametersList.get(i)[2];
+            query("travel_t", Helper.timeStr2int(startTime), Helper.timeStr2int(endTime), 600, 1000000);
+        }
     }
 
 

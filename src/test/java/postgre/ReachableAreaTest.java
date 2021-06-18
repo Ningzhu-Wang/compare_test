@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class ReachableAreaTest {
@@ -39,11 +40,19 @@ public class ReachableAreaTest {
 
     @Test
     public void test() throws Exception {
+        ArrayList<String[]> parametersList = Helper.csvReader("reachable_area_parameters.csv");
+        for (int i = 0; i < 100; i++) {
+            long id = Integer.parseInt(parametersList.get(i)[1]);
+            String st = parametersList.get(i)[2];
+            query(id, Helper.timeStr2int(st), 3600);
+        }
+    }
+
+    private void query(long ID, int st, int tt) throws Exception {
         ReachableAreaQueryTx tx = new ReachableAreaQueryTx();
-        // startCrossId: long, departureTime: int, travelTime: int
-        tx.setDepartureTime((int) (Timestamp.valueOf("2010-05-01 00:52:00").getTime() / 1000L));
-        tx.setStartCrossId(36);
-        tx.setTravelTime(60);
+        tx.setStartCrossId(ID);
+        tx.setDepartureTime(st);
+        tx.setTravelTime(tt);
         post.process(client.execute(tx), tx);
     }
 

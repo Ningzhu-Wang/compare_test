@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class SnapshotTest {
@@ -37,8 +38,11 @@ public class SnapshotTest {
 
     @Test
     public void test() throws Exception {
-        for (int i = 0; i < 200; ++i)
-            query("travel_t", Helper.timeStr2int("201006300940"));
+        ArrayList<String[]> parametersList = Helper.csvReader("snapshot_parameters.csv");
+        for (int i = 0; i < 100; i++) {
+            String startTime = parametersList.get(i)[1];
+            query("travel_t", Helper.timeStr2int(startTime));
+        }
     }
 
     private void query(String propertyName, int t) throws Exception {
